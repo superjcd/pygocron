@@ -1,5 +1,5 @@
 # pygocron
-定时任务管理系统[gocron](https://github.com/ouqiang/gocron)的python sdk
+定时任务管理系统[gocron](https://github.com/ouqiang/gocron)的python sdk。
 
 ## 安装
 pypi:
