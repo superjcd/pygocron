@@ -1,0 +1,4 @@
+http://192.168.0.90:5920/api/task/store?id=&name=test4&spec=0+0+0+%2A+%2A+%2A&command=echo+1&tag=&level=1&dependency_status=1&dependency_task_id=&protocol=2&http_method=1&host_id=2&timeout=0&multi=2&notify_status=1&notify_type=2&notify_keyword=&retry_times=0&retry_interval=0&remark=
+
+	
+id=&name=%E6%B5%8B%E8%AF%955&tag=%E6%B5%8B%E8%AF%95&level=1&dependency_status=1&dependency_task_id=&spec=0%200%200%20%2A%20%2A%20%2A&protocol=2&http_method=1&command=echo%201&host_id=3&timeout=0&multi=2&notify_status=1&notify_type=2&notify_receiver_id=&notify_keyword=&retry_times=0&retry_interval=0&remark=
