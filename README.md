@@ -12,6 +12,8 @@ pip install pygocron
 ### 初始化PyGoCron实例
 
 ```python
+from pygocron.pygocron import PyGoCron
+
 pgc = PyGoCron(gocron_address="http://127.0.0.1:5920", # 你部署的地址,如果设置了环境变量GOCRON_ADDRESS,可以不填
         gocron_admin_user= "your admin username",  # 你的管理员账号,如果设置了环境变量GOCRON_ADMIN_USER,可以不填
         gocron_admin_password="your password")  # 你的管理员密码,如果设置了环境变量GOCRON_ADMIN_PASSWORD,可以不填
