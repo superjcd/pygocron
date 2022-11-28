@@ -1,8 +1,10 @@
 from pygocron.pygocron import PyGoCron
 
 
-pgc = PyGoCron()  # "http://192.168.0.90:5920", "admin", "Hooya911."
+pgc = PyGoCron()  
 
-response = pgc.get_task_logs(status=1)
+response = pgc.enable_task()
 
-print(response["data"][2])
+print(response)
+
+

@@ -63,3 +63,13 @@ nods = pgc.get_nodes()
 
 print(nodes)
 ```
+
+### 关闭任务
+```python
+pgc.disable_task(task_id=1)
+```
+
+### 开启任务
+```python
+pgc.enable_task(task_id=1)
+```

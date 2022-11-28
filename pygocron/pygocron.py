@@ -247,3 +247,37 @@ class PyGoCron:
                 print(f"Can not Fetch All Nodes(hosts), Details: {response.text}")
         else:
             raise Exception(f"Can not Fetch All Nodes(hosts), Details: {response.text}")
+
+    def disable_task(self, task_id:int):
+        """
+        停止任务
+        """
+        url = urljoin(self._base_url, f"api/task/disable/{task_id}")
+
+        response = requests.post(url, headers=self._headers)
+
+        if response.status_code == 200:
+            data = json.loads(response.text)
+            if data["message"] == "操作成功":
+                print("Job Disabled Successfully")
+            else:
+                print(f"Can Not Disable Job, Details: {response.text}")
+        else:
+            raise Exception(f"Can Not Disable Job, Details: {response.text}")
+
+    def enable_task(self, task_id:int):
+        """
+        启动任务
+        """
+        url = urljoin(self._base_url, f"api/task/enable/{task_id}")
+
+        response = requests.post(url, headers=self._headers)
+
+        if response.status_code == 200:
+            data = json.loads(response.text)
+            if data["message"] == "操作成功":
+                print("Job Enabled Successfully")
+            else:
+                print(f"Can Not Enable Job, Details: {response.text}")
+        else:
+            raise Exception(f"Can Not Disable Job, Details: {response.text}")
