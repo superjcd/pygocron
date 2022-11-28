@@ -110,6 +110,8 @@ class PyGoCron:
             data = json.loads(response.text)
             if data["message"] == "保存成功":
                 print("Task Created Successfully")
+            else:
+                raise Exception(f"Create Task Error, Details: {response.text}")
         else:
             raise Exception(f"Create Task Error, Details: {response.text}")
 
@@ -121,9 +123,9 @@ class PyGoCron:
             if data["message"] == "任务已开始运行, 请到任务日志中查看结果":
                 print("Task Triggerd Successfully")
             else:
-                print(f"Canot Trigger Task, Details: {response.text}")
+                raise Exception(f"Canot Trigger Task, Details: {response.text}")
         else:
-            raise Exception(f"Task Run not triggered , Details: {response.text}")
+            raise Exception(f"Canot Trigger Task, Details: {response.text}")
 
     def get_tasks(
         self,
@@ -169,7 +171,7 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 return data["data"]
             else:
-                print(f"Can not Fetch Task List, Details: {response.text}")
+                raise Exception(f"Can not Fetch Task List, Details: {response.text}")
         else:
             raise Exception(f"Can not Fetch Task List, Details: {response.text}")
 
@@ -227,7 +229,7 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 return data["data"]
             else:
-                print(f"Can not Fetch Task Log, Details: {response.text}")
+                raise Exception(f"Can not Fetch Task Log, Details: {response.text}")
         else:
             raise Exception(f"Can not Fetch Task Log, Details: {response.text}")
 
@@ -244,7 +246,7 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 return data["data"]
             else:
-                print(f"Can not Fetch All Nodes(hosts), Details: {response.text}")
+                raise Exception(f"Can not Fetch All Nodes(hosts), Details: {response.text}")
         else:
             raise Exception(f"Can not Fetch All Nodes(hosts), Details: {response.text}")
 
@@ -261,7 +263,7 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 print("Job Disabled Successfully")
             else:
-                print(f"Can Not Disable Job, Details: {response.text}")
+                raise Exception(f"Can Not Disable Job, Details: {response.text}")
         else:
             raise Exception(f"Can Not Disable Job, Details: {response.text}")
 
@@ -278,6 +280,6 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 print("Job Enabled Successfully")
             else:
-                print(f"Can Not Enable Job, Details: {response.text}")
+                raise Exception(f"Can Not Enable Job, Details: {response.text}")
         else:
-            raise Exception(f"Can Not Disable Job, Details: {response.text}")
+            raise Exception(f"Can Not Enable Job, Details: {response.text}")
