@@ -1,8 +1,17 @@
+import time
 import requests
 import os
 import json
 from copy import deepcopy
 from urllib.parse import urljoin
+from enum import Enum
+
+
+class RunStatus(Enum):
+    FAILED: int = 0
+    RUNNING: int = 1
+    SUCCESS: int = 2
+    PENDING: int = 3
 
 
 class PyGoCron:
@@ -52,9 +61,9 @@ class PyGoCron:
         retry_times: int = 0,
         retry_interval: int = 0,
         remark: str = "",
-    ):
+    ) -> int:
         """
-        创建任务
+        创建任务, 返回任务id
 
         参数
         -----
@@ -110,18 +119,23 @@ class PyGoCron:
             data = json.loads(response.text)
             if data["message"] == "保存成功":
                 print("Task Created Successfully")
+                return self.get_latest_task_id(name=name)
             else:
                 raise Exception(f"Create Task Error, Details: {response.text}")
         else:
             raise Exception(f"Create Task Error, Details: {response.text}")
 
-    def run_task(self, task_id):
+    def run_task(self, task_id) -> int:
+        """
+        Run task and return a task run id 
+        """
         url = urljoin(self._base_url, f"api/task/run/{task_id}")
         response = requests.get(url, headers=self._headers)
         if response.status_code == 200:
             data = json.loads(response.text)
             if data["message"] == "任务已开始运行, 请到任务日志中查看结果":
                 print("Task Triggerd Successfully")
+                return self.get_latest_run_id(task_id)
             else:
                 raise Exception(f"Canot Trigger Task, Details: {response.text}")
         else:
@@ -194,7 +208,7 @@ class PyGoCron:
 
     def get_task_logs(
         self,
-        task_id: int=None,
+        task_id: int = None,
         page: int = 1,
         page_size: int = 20,
         protocol: int = None,
@@ -232,6 +246,48 @@ class PyGoCron:
                 raise Exception(f"Can not Fetch Task Log, Details: {response.text}")
         else:
             raise Exception(f"Can not Fetch Task Log, Details: {response.text}")
+    
+    def get_latest_task_id(self, name) -> id:
+        time.sleep(1)  # wait until the record be ready in database
+        tasks = self.get_tasks(name=name)
+        task_records = tasks["data"]
+        if task_records:
+            return task_records[0]["id"]
+
+
+    def get_latest_run_id(self, task_id) -> int:
+        """
+        获取Task当前(最近的)的RunId
+        """
+        time.sleep(1)  # wait until the record be ready in database
+        logs = self.get_task_logs(task_id=task_id,)
+        logs_data = logs["data"]
+        if logs_data:
+            first_record = logs_data[0]
+            return first_record["id"]
+
+    def check_run_status(self, task_id, run_id) -> RunStatus:  # 0 失败 1 在运行 2 成功
+        """
+        查看一个Run的运行状态
+        """
+        logs = self.get_task_logs(
+            task_id=task_id, page_size=100
+        )  # 这里放大page size的原因在于：如果page_size过小，而我的job run运行了很多次了， 可能找不到之前那个run状态；
+        logs_data = logs["data"]
+        if logs_data:
+            for record in logs_data:  # 有序的， 按开始时间倒序
+                if record["id"] == run_id:
+                    status = record["status"]
+                    if status == 0:
+                        return RunStatus.FAILED
+                    elif status == 1:
+                        return RunStatus.RUNNING
+                    elif status == 2:
+                        return RunStatus.SUCCESS
+                    else:
+                        raise ValueError(f"Wrong status number: {status}")
+            print("run id not found")
+            return None
 
     def get_nodes(self):
         """
@@ -246,11 +302,13 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 return data["data"]
             else:
-                raise Exception(f"Can not Fetch All Nodes(hosts), Details: {response.text}")
+                raise Exception(
+                    f"Can not Fetch All Nodes(hosts), Details: {response.text}"
+                )
         else:
             raise Exception(f"Can not Fetch All Nodes(hosts), Details: {response.text}")
 
-    def disable_task(self, task_id:int):
+    def disable_task(self, task_id: int):
         """
         停止任务
         """
@@ -267,7 +325,7 @@ class PyGoCron:
         else:
             raise Exception(f"Can Not Disable Job, Details: {response.text}")
 
-    def enable_task(self, task_id:int):
+    def enable_task(self, task_id: int):
         """
         启动任务
         """
