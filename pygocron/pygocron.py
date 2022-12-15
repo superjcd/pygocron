@@ -2,10 +2,11 @@ import time
 import requests
 import os
 import json
+import datetime
 from copy import deepcopy
 from urllib.parse import urljoin
 from enum import Enum
-
+from rich import print as rprint
 
 class RunStatus(Enum):
     FAILED: int = 0
@@ -13,6 +14,29 @@ class RunStatus(Enum):
     SUCCESS: int = 2
     PENDING: int = 3
 
+class LogLevel(Enum):
+    INFO:str = "INFO"
+    SUCCESS:str = "SUCCESS"
+    WARN:str = "WARN"
+    ERROR:str = "ERROR"
+    DEBUG:str = "DEBUG"
+
+
+def logger_print(message:str ,level:LogLevel=LogLevel.INFO):
+    this_moment = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+    message_prefix = f"{this_moment}-pygocron"
+    if level == LogLevel.INFO:
+        message_prefix =  message_prefix + f"[blue b] :{level.value}: [/]" 
+    if level == LogLevel.SUCCESS:
+        message_prefix =  message_prefix + f"[green b] :{level.value}: [/]" 
+    if level == LogLevel.WARN:
+        message_prefix =  message_prefix + f"[red b] :{level.value}: [/]" 
+    if level == LogLevel.ERROR:
+        message_prefix =  message_prefix + f"[red b] :{level.value}: [/]" 
+    if level == LogLevel.DEBUG:
+        message_prefix = message_prefix + f"[blue b] :{level.value}: [/]" 
+    message = message_prefix  + message
+    rprint(message)
 
 class PyGoCron:
     def __init__(
@@ -118,12 +142,12 @@ class PyGoCron:
         if response.status_code == 200:
             data = json.loads(response.text)
             if data["message"] == "保存成功":
-                print("Task Created Successfully")
+                logger_print(f"Task Created:`{name}` Successfully", LogLevel.SUCCESS)
                 return self.get_latest_task_id(name=name)
             else:
-                raise Exception(f"Create Task Error, Details: {response.text}")
+                raise Exception(f"Create Task:`{name}` Error, Details: {response.text}")
         else:
-            raise Exception(f"Create Task Error, Details: {response.text}")
+            raise Exception(f"Create Task:`{name}` Error, Details: {response.text}")
 
     def run_task(self, task_id) -> int:
         """
@@ -134,7 +158,7 @@ class PyGoCron:
         if response.status_code == 200:
             data = json.loads(response.text)
             if data["message"] == "任务已开始运行, 请到任务日志中查看结果":
-                print("Task Triggerd Successfully")
+                logger_print("Task Triggerd Successfully", LogLevel.SUCCESS)
                 return self.get_latest_run_id(task_id)
             else:
                 raise Exception(f"Canot Trigger Task, Details: {response.text}")
@@ -286,7 +310,7 @@ class PyGoCron:
                         return RunStatus.SUCCESS
                     else:
                         raise ValueError(f"Wrong status number: {status}")
-            print("run id not found")
+            logger_print("run id not found", LogLevel.WARN)
             return None
 
     def get_nodes(self):
@@ -319,7 +343,7 @@ class PyGoCron:
         if response.status_code == 200:
             data = json.loads(response.text)
             if data["message"] == "操作成功":
-                print("Job Disabled Successfully")
+                logger_print("Job Disabled Successfully", LogLevel.SUCCESS)
             else:
                 raise Exception(f"Can Not Disable Job, Details: {response.text}")
         else:
@@ -336,7 +360,7 @@ class PyGoCron:
         if response.status_code == 200:
             data = json.loads(response.text)
             if data["message"] == "操作成功":
-                print("Job Enabled Successfully")
+                logger_print("Job Enabled Successfully", LogLevel.SUCCESS)
             else:
                 raise Exception(f"Can Not Enable Job, Details: {response.text}")
         else:
