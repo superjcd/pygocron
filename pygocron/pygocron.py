@@ -75,7 +75,7 @@ class PyGoCron:
         dependency_task_id: str = "",
         protocol: int = 2,
         http_method: int = 1,
-        host_id: int = 3,
+        host_id: int = 1,
         timeout: int = 0,
         multi: int = 2,
         notify_status: int = 1,
