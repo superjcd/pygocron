@@ -49,6 +49,9 @@ class PyGoCron:
         self._headers = None
         self._authenticate(gocron_admin_user, gocron_admin_password)
 
+        if self.gocron_address == "" or self.gocron_admin_user == "" or self.gocron_admin_password=="":
+            raise ValueError("Please set all of following enviroment varibles:`GOCRON_ADDRESS`, `GOCRON_ADMIN_USER`, `GOCRON_ADMIN_PASSWORD`")
+
     def _authenticate(self, username, password):
         url = urljoin(self._base_url, "/api/user/login")
         payload = {"username": username, "password": password}
