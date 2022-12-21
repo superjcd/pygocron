@@ -434,3 +434,13 @@ class PyGoCron:
                 )
         else:
             raise PyGcronException(f"Can Not Delete the Task, Details: {response.text}")
+
+
+    def get_all_methods(self):
+        all_methods = dir(self)
+        methods= [
+            method
+            for method in all_methods
+            if not method.startswith("_") and method != "get_all_methods"
+        ]
+        print("\n".join(sorted(methods)))

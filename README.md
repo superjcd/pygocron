@@ -1,79 +1,98 @@
 # pygocron
-定时任务管理系统[gocron](https://github.com/ouqiang/gocron)的python sdk。
+Python Sdk for [gocron](https://github.com/ouqiang/gocron)
 
-## 安装
-pypi:
+## Install
+### pypi:
 ```shell
 pip install pygocron
 ```
 
-## 使用
+## How to use
 
-### 初始化PyGoCron实例
+### Prerequisite
+#### Install the gocron 
+Go to [gocron](https://github.com/ouqiang/gocron) homepage,  for those don't understand Chinese, you can follow my brief instruction here to delpoy it:
+
+- firt, go to [gocron relase page](https://github.com/ouqiang/gocron/releases) and find a proper `gocron` version, for Linux user, u can download the `gocron-v{VERSION}-linux-amd64.tar.gz`, unzip the downloaded file, and u will find a executable file named `gocron`, then you can just run `./gocron web`(run `nohup ./gocron web &` to run a backgroudly)
+- second, go to [gocron relase page](https://github.com/ouqiang/gocron/releases) again,this time we will download the `gocron-node-v{VERSION}-linux-amd64.tar.gz`, unzip the downloaded file, and u will find a executable file named `gocron-node`, then you can just run `./gocron-node`(run `nohup ./gocron &` to run it backgroudly) 
+
+- last, u can open the browser and go to the url of `http://{your server address}:5920`, the page u saw was a  `Configuration page`, you need to define such as `admin username` and `password` sort of things, and donn't forget to provide a database connection too(`mysql` or `postgresql`)
+
+
+### Instantiate a PyGoCron object
 
 ```python
 from pygocron.pygocron import PyGoCron
 
-pgc = PyGoCron(gocron_address="http://127.0.0.1:5920", # 你部署的地址,如果设置了环境变量GOCRON_ADDRESS,可以不填
-        gocron_admin_user= "your admin username",  # 你的管理员账号,如果设置了环境变量GOCRON_ADMIN_USER,可以不填
-        gocron_admin_password="your password")  # 你的管理员密码,如果设置了环境变量GOCRON_ADMIN_PASSWORD,可以不填
+pgc = PyGoCron(gocron_address="http://127.0.0.1:5920", 
+        gocron_admin_user= "your admin username", 
+        gocron_admin_password="your password")
 ```
 
-但你也可以通过设置下面的环境变量达到相同的效果： `GOCRON_ADDRESS`, `GOCRON_ADMIN_USER`, `GOCRON_ADMIN_PASSWORD`, 设置完环境变量后只需要：
+Off course, u can initialize it by run `pgc = PyGoCron()`, after u setted the following environment variables:
+-  `GOCRON_ADDRESS`
+-  `GOCRON_ADMIN_USER`
+-  `GOCRON_ADMIN_PASSWORD`
 
-pgc = PyGoCron()
 
-### 创建任务
+### Create a task
 ```python
 pgc.create_task(
-        name: "测试任务",
-        spec: "0 0 0 * * *", # cron 表达式， gocron支持精确到秒
-        command: "echo 1", # 命令
-        tag: str = "测试",    
+        name: "test job",
+        spec: "0 0 0 * * *", # cron expression, differ from normal cron expression, it can be set at `second` level(the third `0` here)
+        command: "echo 1", # system command
+        tag: str = "Test",   
 )
 ```
-**PS: 详细参数说明， 请使用`help(pgc.create_task)`进行查看， 后面的接口说明也是同样**
 
-### 通过任务名获取任务id
+**PS: To see descriptions for all arguments, u can use `help(pgc.create_task)`, same for following methods**
+
+### Get a task id by name
 
 ```python
-task_id = pgc.get_task_id_by_name(name="测试任务")
+task_id = pgc.get_task_id_by_name(name="test job")
 
 print(task_id)
 ```
 
-### 手动执行任务
+### Run a task off manualy
 
 ```python
 pgc.run_task(task_id=1)
 ```
 
-### 获取任务运行日志
+### Get task log
 ```python
 logs = pgc.get_task_logs(task_id=1)
 
 print(logs)
 ```
-注意返回的结果中的`status`字段,0表示失败 1表示正在运行, 2表示运行成功; 然而在请求的的时候：status字段, 0表示所有任务(可省略), 1表示失败的任务, 2表示正在运行的任务, 所以你要获取正在运行的所有任务日志， 可以执行下面的命令:
+Note the `status` field in the return object, 0 stands for `failed`, 1 for `running`, and 2 for `success`; 
+While running `get_task_logs` and use `status` as an argument, things will be totally different, 0 now for all tasks(default value), 1 for faild tasks and 2 for running tasks.
+For instance if u want to get all running tasks u can run:
 ```python
 logs = pgc.get_task_logs(status=2)
 
 print(logs)
 ```
-
-### 获取所有节点（服务器）
+>Better idea is to keep the meanning of `status` identical, unfortunately this is the `gocron` design
+> 
+### Get all existing nodes
 ```python
 nods = pgc.get_nodes()
 
 print(nodes)
 ```
 
-### 关闭任务
+### Disable a task
 ```python
 pgc.disable_task(task_id=1)
 ```
 
-### 开启任务
+### Enable a task 
 ```python
 pgc.enable_task(task_id=1)
 ```
+
+### Other methods
+run`pgc.get_all_methods()` to get all exsiting methods

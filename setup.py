@@ -18,7 +18,7 @@ test_requirements = []
 
 setup(
     author="Jiang Chaodi",
-    author_email="chaodi.jiang@fdsintl.com",
+    author_email="929760274@qq.com",
     python_requires=">=3.6",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
@@ -33,7 +33,7 @@ setup(
     description="python sdk for gocron",
     install_requires=requirements,
     license="MIT license",
-    # long_description=readme + "\n\n" + history,
+    long_description=readme + "\n\n" + history,
     include_package_data=True,
     keywords="pygocron",
     name="pygocron",
@@ -41,6 +41,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/superjcd/pygocron",
-    version="0.1.5",
+    version="0.1.6",
     zip_safe=False,
 )
