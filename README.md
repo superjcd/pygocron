@@ -19,6 +19,10 @@ pgc = PyGoCron(gocron_address="http://127.0.0.1:5920", # 你部署的地址,如�
         gocron_admin_password="your password")  # 你的管理员密码,如果设置了环境变量GOCRON_ADMIN_PASSWORD,可以不填
 ```
 
+但你也可以通过设置下面的环境变量达到相同的效果： `GOCRON_ADDRESS`, `GOCRON_ADMIN_USER`, `GOCRON_ADMIN_PASSWORD`, 设置完环境变量后只需要：
+
+pgc = PyGoCron()
+
 ### 创建任务
 ```python
 pgc.create_task(
@@ -50,14 +54,14 @@ logs = pgc.get_task_logs(task_id=1)
 
 print(logs)
 ```
-注意返回的结果中的`status`字段, 1表示正在运行, 2表示运行成功; 然而在请求的的时候：status字段, 0表示所有任务(可省略), 1表示失败的任务, 2表示正在运行的任务, 所以你要获取正在运行的所有任务日志， 可以执行下面的命令:
+注意返回的结果中的`status`字段,0表示失败 1表示正在运行, 2表示运行成功; 然而在请求的的时候：status字段, 0表示所有任务(可省略), 1表示失败的任务, 2表示正在运行的任务, 所以你要获取正在运行的所有任务日志， 可以执行下面的命令:
 ```python
 logs = pgc.get_task_logs(status=2)
 
 print(logs)
 ```
 
-### 获取所有节点
+### 获取所有节点（服务器）
 ```python
 nods = pgc.get_nodes()
 

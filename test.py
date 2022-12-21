@@ -1,6 +1,7 @@
-from pygocron.pygocron import logger_print, LogLevel
+from pygocron.pygocron import PyGoCron
 
 
+pgc = PyGoCron()
 
 
-logger_print("hello world", LogLevel.DEBUG)
+pgc.delete_task_by_tag("TestJob9")
