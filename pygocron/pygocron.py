@@ -178,7 +178,7 @@ class PyGoCron:
             data = json.loads(response.text)
             if data["message"] == "任务已开始运行, 请到任务日志中查看结果":
                 logger_print("Task Triggerd Successfully", LogLevel.SUCCESS)
-                return self.get_latest_run_id(task_id)
+                return self.get_task_id_lagged(task_id)
             else:
                 raise PyGcronException(f"Canot Trigger Task, Details: {response.text}")
         else:
