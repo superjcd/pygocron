@@ -178,7 +178,7 @@ class PyGoCron:
             data = json.loads(response.text)
             if data["message"] == "任务已开始运行, 请到任务日志中查看结果":
                 logger_print("Task Triggerd Successfully", LogLevel.SUCCESS)
-                return self.get_task_id_lagged(task_id)
+                return self.get_latest_run_id(task_id)
             else:
                 raise PyGcronException(f"Canot Trigger Task, Details: {response.text}")
         else:
@@ -252,13 +252,6 @@ class PyGoCron:
                 raise PyGcronException(f"Task Name `{name}` Not Found")
             else:
                 return task_id
-
-    def get_task_id_lagged(self, name, wait=1) -> id:
-        """
-        It's usually helpful to wait after some seconds to get a recently created task, cus task creation takes time too 
-        """
-        time.sleep(wait)  # wait until the record be ready in database
-        return self.get_task_id_by_name(name=name)
 
     def get_task_logs(
         self,
@@ -392,6 +385,33 @@ class PyGoCron:
                 raise PyGcronException(f"Can Not Enable Task, Details: {response.text}")
         else:
             raise PyGcronException(f"Can Not Enable Task, Details: {response.text}")
+
+    def get_task_id_lagged(self, name, wait=1) ->  int:
+        """
+        Get a task id after waitting some second
+
+        Params
+        ----
+        name: task name
+        """
+        time.sleep(wait)  # wait until the record be ready in database
+        return self.get_task_id_by_name(name=name)
+
+    def get_latest_run_id(self, task_id, wait=1) -> int:
+        """
+        Get most recent run id of a task
+
+        Params
+        ----
+        task_id: task id
+        """
+        time.sleep(1)  # wait until the record be ready in database
+        logs = self.get_task_logs(task_id=task_id,)
+        logs_data = logs["data"]
+        if logs_data:
+            first_record = logs_data[0]
+            return first_record["id"]
+
 
     def delete_task_by_tag(self, tag: str):
         """
