@@ -24,7 +24,7 @@ class LogLevel(Enum):
     DEBUG: str = "DEBUG"
 
 
-class PyGcronException(Exception):
+class PyGocronException(Exception):
     pass
 
 
@@ -73,9 +73,9 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 self._headers = {"Auth-Token": data["data"]["token"]}
             else:
-                raise PyGcronException(f"Authentication Error, details: {str(data)}")
+                raise PyGocronException(f"Authentication Error, details: {str(data)}")
         else:
-            raise PyGcronException(
+            raise PyGocronException(
                 f"Authentication Error, Status code: {response.status_code}"
             )
 
@@ -160,11 +160,11 @@ class PyGoCron:
                 logger_print(f"Task Created:`{name}` Successfully", LogLevel.SUCCESS)
                 return self.get_task_id_lagged(name=name)
             else:
-                raise PyGcronException(
+                raise PyGocronException(
                     f"Create Task:`{name}` Error, Details: {response.text}"
                 )
         else:
-            raise PyGcronException(
+            raise PyGocronException(
                 f"Create Task:`{name}` Error, Details: {response.text}"
             )
 
@@ -180,9 +180,9 @@ class PyGoCron:
                 logger_print("Task Triggerd Successfully", LogLevel.SUCCESS)
                 return self.get_latest_run_id(task_id)
             else:
-                raise PyGcronException(f"Canot Trigger Task, Details: {response.text}")
+                raise PyGocronException(f"Canot Trigger Task, Details: {response.text}")
         else:
-            raise PyGcronException(f"Canot Trigger Task, Details: {response.text}")
+            raise PyGocronException(f"Canot Trigger Task, Details: {response.text}")
 
     def get_tasks(
         self,
@@ -230,11 +230,11 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 return data["data"]
             else:
-                raise PyGcronException(
+                raise PyGocronException(
                     f"Can not Fetch Task List, Details: {response.text}"
                 )
         else:
-            raise PyGcronException(f"Can not Fetch Task List, Details: {response.text}")
+            raise PyGocronException(f"Can not Fetch Task List, Details: {response.text}")
 
     def get_task_id_by_name(self, name: str):
         """
@@ -249,7 +249,7 @@ class PyGoCron:
             try:
                 task_id = data["data"][0]["id"]
             except IndexError:
-                raise PyGcronException(f"Task Name `{name}` Not Found")
+                raise PyGocronException(f"Task Name `{name}` Not Found")
             else:
                 return task_id
 
@@ -290,11 +290,11 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 return data["data"]
             else:
-                raise PyGcronException(
+                raise PyGocronException(
                     f"Can not Fetch Task Log, Details: {response.text}"
                 )
         else:
-            raise PyGcronException(f"Can not Fetch Task Log, Details: {response.text}")
+            raise PyGocronException(f"Can not Fetch Task Log, Details: {response.text}")
 
     def check_run_status(self, task_id, run_id) -> RunStatus:  # 0 失败 1 在运行 2 成功
         """
@@ -336,11 +336,11 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 return data["data"]
             else:
-                raise PyGcronException(
+                raise PyGocronException(
                     f"Can not Fetch All Nodes(hosts), Details: {response.text}"
                 )
         else:
-            raise PyGcronException(
+            raise PyGocronException(
                 f"Can not Fetch All Nodes(hosts), Details: {response.text}"
             )
 
@@ -361,11 +361,11 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 logger_print("Task Disabled Successfully", LogLevel.SUCCESS)
             else:
-                raise PyGcronException(
+                raise PyGocronException(
                     f"Can Not Disable Task, Details: {response.text}"
                 )
         else:
-            raise PyGcronException(f"Can Not Disable Task, Details: {response.text}")
+            raise PyGocronException(f"Can Not Disable Task, Details: {response.text}")
 
     def enable_task(self, task_id: int):
         """
@@ -382,9 +382,9 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 logger_print("Task Enabled Successfully", LogLevel.SUCCESS)
             else:
-                raise PyGcronException(f"Can Not Enable Task, Details: {response.text}")
+                raise PyGocronException(f"Can Not Enable Task, Details: {response.text}")
         else:
-            raise PyGcronException(f"Can Not Enable Task, Details: {response.text}")
+            raise PyGocronException(f"Can Not Enable Task, Details: {response.text}")
 
     def get_task_id_lagged(self, name, wait=1) ->  int:
         """
@@ -449,11 +449,11 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 logger_print("Task Deleted Successfully", LogLevel.SUCCESS)
             else:
-                raise PyGcronException(
+                raise PyGocronException(
                     f"Can Not Delete the Task, Details: {response.text}"
                 )
         else:
-            raise PyGcronException(f"Can Not Delete the Task, Details: {response.text}")
+            raise PyGocronException(f"Can Not Delete the Task, Details: {response.text}")
 
 
     def get_all_methods(self):
