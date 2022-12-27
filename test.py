@@ -4,4 +4,5 @@ from pygocron.pygocron import PyGoCron
 pgc = PyGoCron()
 
 
-pgc.get_all_methods()
+
+pgc.check_node(5)

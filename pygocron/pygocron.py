@@ -73,10 +73,10 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 self._headers = {"Auth-Token": data["data"]["token"]}
             else:
-                raise PyGocronException(f"Authentication Error, details: {str(data)}")
+                raise PyGocronException(f"Authentication error, details: {response.text}")
         else:
             raise PyGocronException(
-                f"Authentication Error, Status code: {response.status_code}"
+                f"Authentication error, details: {response.text}"
             )
 
     def create_task(
@@ -157,15 +157,15 @@ class PyGoCron:
         if response.status_code == 200:
             data = json.loads(response.text)
             if data["message"] == "保存成功":
-                logger_print(f"Task Created:`{name}` Successfully", LogLevel.SUCCESS)
+                logger_print(f"Task created:`{name}` successfully", LogLevel.SUCCESS)
                 return self.get_task_id_lagged(name=name)
             else:
                 raise PyGocronException(
-                    f"Create Task:`{name}` Error, Details: {response.text}"
+                    f"Create task:`{name}` rrror, details: {response.text}"
                 )
         else:
             raise PyGocronException(
-                f"Create Task:`{name}` Error, Details: {response.text}"
+                f"Create task:`{name}` rrror, details: {response.text}"
             )
 
     def run_task(self, task_id) -> int:
@@ -180,9 +180,9 @@ class PyGoCron:
                 logger_print("Task Triggerd Successfully", LogLevel.SUCCESS)
                 return self.get_latest_run_id(task_id)
             else:
-                raise PyGocronException(f"Canot Trigger Task, Details: {response.text}")
+                raise PyGocronException(f"Canot trigger task, details: {response.text}")
         else:
-            raise PyGocronException(f"Canot Trigger Task, Details: {response.text}")
+            raise PyGocronException(f"Canot trigger task, details: {response.text}")
 
     def get_tasks(
         self,
@@ -231,10 +231,10 @@ class PyGoCron:
                 return data["data"]
             else:
                 raise PyGocronException(
-                    f"Can not Fetch Task List, Details: {response.text}"
+                    f"Can not fetch task list, details: {response.text}"
                 )
         else:
-            raise PyGocronException(f"Can not Fetch Task List, Details: {response.text}")
+            raise PyGocronException(f"Can not fetch task list, details: {response.text}")
 
     def get_task_id_by_name(self, name: str):
         """
@@ -291,7 +291,7 @@ class PyGoCron:
                 return data["data"]
             else:
                 raise PyGocronException(
-                    f"Can not Fetch Task Log, Details: {response.text}"
+                    f"Can not fetch task log, details: {response.text}"
                 )
         else:
             raise PyGocronException(f"Can not Fetch Task Log, Details: {response.text}")
@@ -323,27 +323,6 @@ class PyGoCron:
             logger_print("run id not found", LogLevel.WARN)
             return None
 
-    def get_nodes(self):
-        """
-        Get all nodes(server adddress info)
-        """
-        url = urljoin(self._base_url, "api/host/all")
-        response = requests.get(url, headers=self._headers)
-
-        if response.status_code == 200:
-            data = json.loads(response.text)
-
-            if data["message"] == "操作成功":
-                return data["data"]
-            else:
-                raise PyGocronException(
-                    f"Can not Fetch All Nodes(hosts), Details: {response.text}"
-                )
-        else:
-            raise PyGocronException(
-                f"Can not Fetch All Nodes(hosts), Details: {response.text}"
-            )
-
     def disable_task(self, task_id: int):
         """
         Disable a task by task id 
@@ -359,13 +338,13 @@ class PyGoCron:
         if response.status_code == 200:
             data = json.loads(response.text)
             if data["message"] == "操作成功":
-                logger_print("Task Disabled Successfully", LogLevel.SUCCESS)
+                logger_print("Task disabled successfully", LogLevel.SUCCESS)
             else:
                 raise PyGocronException(
-                    f"Can Not Disable Task, Details: {response.text}"
+                    f"Can not disable task, details: {response.text}"
                 )
         else:
-            raise PyGocronException(f"Can Not Disable Task, Details: {response.text}")
+            raise PyGocronException(f"Can not disable task, details: {response.text}")
 
     def enable_task(self, task_id: int):
         """
@@ -382,9 +361,9 @@ class PyGoCron:
             if data["message"] == "操作成功":
                 logger_print("Task Enabled Successfully", LogLevel.SUCCESS)
             else:
-                raise PyGocronException(f"Can Not Enable Task, Details: {response.text}")
+                raise PyGocronException(f"Can not enable task, details: {response.text}")
         else:
-            raise PyGocronException(f"Can Not Enable Task, Details: {response.text}")
+            raise PyGocronException(f"Can not enable task, details: {response.text}")
 
     def get_task_id_lagged(self, name, wait=1) ->  int:
         """
@@ -405,7 +384,7 @@ class PyGoCron:
         ----
         task_id: task id
         """
-        time.sleep(1)  # wait until the record be ready in database
+        time.sleep(wait)  # wait until the record be ready in database
         logs = self.get_task_logs(task_id=task_id,)
         logs_data = logs["data"]
         if logs_data:
@@ -450,11 +429,91 @@ class PyGoCron:
                 logger_print("Task Deleted Successfully", LogLevel.SUCCESS)
             else:
                 raise PyGocronException(
-                    f"Can Not Delete the Task, Details: {response.text}"
+                    f"Can not delete the task, details: {response.text}"
                 )
         else:
-            raise PyGocronException(f"Can Not Delete the Task, Details: {response.text}")
+            raise PyGocronException(f"Can not delete the task, details: {response.text}")
 
+    def get_nodes(self):
+        """
+        Get all nodes(server adddress info)
+        """
+        url = urljoin(self._base_url, "api/host/all")
+        response = requests.get(url, headers=self._headers)
+
+        if response.status_code == 200:
+            data = json.loads(response.text)
+
+            if data["message"] == "操作成功":
+                return data["data"]
+            else:
+                raise PyGocronException(
+                    f"Can not fetch all nodes(hosts), details: {response.text}"
+                )
+        else:
+            raise PyGocronException(
+                f"Can not fetch all nodes(hosts), details: {response.text}"
+            )
+
+
+    def add_new_node(self, ip:str, port:int, alias:str, remark:str):
+        """
+        Add a new node to gocron. To make sure the node you added will work well, you need to check its accesibility by run `check_node` method 
+
+        Params
+        -----
+        ip: ip address for the node 
+        port: port
+        alias: alias for node
+        remark: comment or tag for the node
+        """
+        url = urljoin(
+            self._base_url, f"api/host/store"
+        )  
+        payload = {
+           "id":"",
+           "name": ip, 
+           "port": port,
+           "alias": alias,
+           "remark": remark,
+        }
+        headers = deepcopy(self._headers)
+        headers["Content-Type"] = "application/x-www-form-urlencoded"
+        response = requests.post(url, headers=headers, params=payload)  
+
+        print(response.request.url)
+        if response.status_code == 200:
+            data = json.loads(response.text)
+            if data["message"] == "保存成功":
+                logger_print("Node added successfully", LogLevel.SUCCESS)
+            else:
+                raise PyGocronException(
+                    f"Can not add node, details: {response.text}"
+                )
+        else:
+            raise PyGocronException(f"Can not add node, details: {response.text}")
+    
+    def check_node(self, node_id):
+        """
+        Check if a node is accessible or not
+        """
+        url = urljoin(
+            self._base_url, f"api/host/ping/{node_id}"
+        )  
+
+        response = requests.get(url, headers=self._headers)  
+
+        if response.status_code == 200:
+            data = json.loads(response.text)
+            if data["message"] == "连接成功":
+                logger_print("Node is running Successfully", LogLevel.SUCCESS)
+            else:
+                raise PyGocronException(
+                    f"Can not connect to node, details: {response.text}"
+                )
+        else:
+            raise PyGocronException(f"Can not connect to node, details: {response.text}")
+    
 
     def get_all_methods(self):
         all_methods = dir(self)
@@ -464,3 +523,4 @@ class PyGoCron:
             if not method.startswith("_") and method != "get_all_methods"
         ]
         print("\n".join(sorted(methods)))
+   
