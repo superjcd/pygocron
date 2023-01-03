@@ -161,11 +161,11 @@ class PyGoCron:
                 return self.get_task_id_lagged(name=name)
             else:
                 raise PyGocronException(
-                    f"Create task:`{name}` rrror, details: {response.text}"
+                    f"Create task:`{name}` error, details: {response.text}"
                 )
         else:
             raise PyGocronException(
-                f"Create task:`{name}` rrror, details: {response.text}"
+                f"Create task:`{name}` error, details: {response.text}"
             )
 
     def run_task(self, task_id) -> int:

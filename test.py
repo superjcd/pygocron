@@ -5,4 +5,4 @@ pgc = PyGoCron()
 
 
 
-pgc.check_node(5)
+pgc.add_new_node()
